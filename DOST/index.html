@@ -50,26 +50,69 @@
     </section>
   </div>
   <script>
-    const audio = document.getElementById('hero-audio');
+    const backgroundAudio = document.getElementById('hero-audio');
+    let backgroundStarted = false;
+    
+    const audioFiles = [
+      'chikna-voice.mp3',      // chikna lauda
+      'kala-voice.mp3',         // kala lauda
+      'gilgit-voice.mp3',       // gilgit lauda
+      'bada-voice.mp3'          // bada lauda
+    ];
 
-    function playAudio(card) {
-      if (!audio) return;
-      document.querySelectorAll('.hero-card').forEach((item) => item.classList.remove('is-playing'));
-      audio.pause();
-      audio.currentTime = 0;
-      audio.play().catch(() => {
-        // Playback may be blocked until user interaction is allowed; this should work on the next click.
-      });
-      card.classList.add('is-playing');
+    // Create audio objects for each card
+    const audioPlayers = audioFiles.map(file => new Audio(file));
+
+    // Set background audio to slow speed
+    backgroundAudio.playbackRate = 0.75; // Slow speed
+    backgroundAudio.loop = true;
+    backgroundAudio.volume = 0.5; // Lower volume for background
+
+    function startBackgroundAudio() {
+      if (!backgroundStarted) {
+        backgroundStarted = true;
+        backgroundAudio.play().catch(() => {
+          // Playback may be blocked
+        });
+      }
     }
 
-    document.querySelectorAll('.hero-card').forEach((card) => {
+    document.querySelectorAll('.hero-card').forEach((card, index) => {
       const button = card.querySelector('.play-button');
       if (!button) return;
       if (card.dataset.sound === 'true') {
-        button.addEventListener('click', () => playAudio(card));
+        button.addEventListener('click', () => {
+          // Start background audio on first click
+          startBackgroundAudio();
+          
+          // Stop background audio
+          backgroundAudio.pause();
+
+          // Stop all other audio players
+          audioPlayers.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+          });
+
+          // Remove playing class from all cards
+          document.querySelectorAll('.hero-card').forEach((item) => item.classList.remove('is-playing'));
+
+          // Play the clicked card's audio
+          audioPlayers[index].play().catch(() => {
+            // Playback may be blocked until user interaction is allowed
+          });
+          card.classList.add('is-playing');
+
+          // Resume background audio after card audio finishes
+          audioPlayers[index].onended = () => {
+            backgroundAudio.play().catch(() => {});
+          };
+        });
       }
     });
+
+    // Try to start background audio on first page interaction
+    document.addEventListener('click', startBackgroundAudio, { once: true });
   </script>
 </body>
 </html>
