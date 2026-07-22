@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Sound Gallery</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <section class="hero">
+      <div class="hero-panel">
+        <div class="hero-copy">
+          <span class="eyebrow">Sound Gallery</span>
+          <h1>Instant playback for every premium audio card</h1>
+          <p class="hero-note">Tap the play button below each image to restart the uploaded sound instantly. Every click starts playback from the beginning for a crisp, responsive experience.</p>
+        </div>
+        <div class="hero-gallery">
+          <div class="hero-card" data-sound="true">
+            <img src="photo1.jpg" alt="Uploaded photo 1" />
+            <div class="image-footer">
+              <button type="button" class="play-button" aria-label="Play sound"><span class="play-icon">▶</span></button>
+              <p class="image-label">chikna lauda</p>
+            </div>
+          </div>
+          <div class="hero-card" data-sound="true">
+            <img src="photo2.jpg" alt="Uploaded photo 2" />
+            <div class="image-footer">
+              <button type="button" class="play-button" aria-label="Play sound"><span class="play-icon">▶</span></button>
+              <p class="image-label">kala lauda</p>
+            </div>
+          </div>
+          <div class="hero-card" data-sound="true">
+            <img src="photo3.jpg" alt="Uploaded photo 3" />
+            <div class="image-footer">
+              <button type="button" class="play-button" aria-label="Play sound"><span class="play-icon">▶</span></button>
+              <p class="image-label">gilgit lauda</p>
+            </div>
+          </div>
+          <div class="hero-card" data-sound="true">
+            <img src="photo4.jpg" alt="Uploaded photo 4" />
+            <div class="image-footer">
+              <button type="button" class="play-button" aria-label="Play sound"><span class="play-icon">▶</span></button>
+              <p class="image-label">bada lauda</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <audio id="hero-audio" src="Sound Effect - Ahhh!!.wav" preload="auto"></audio>
+    </section>
+  </div>
+  <script>
+    const audio = document.getElementById('hero-audio');
+
+    function playAudio(card) {
+      if (!audio) return;
+      document.querySelectorAll('.hero-card').forEach((item) => item.classList.remove('is-playing'));
+      audio.pause();
+      audio.currentTime = 0;
+      audio.play().catch(() => {
+        // Playback may be blocked until user interaction is allowed; this should work on the next click.
+      });
+      card.classList.add('is-playing');
+    }
+
+    document.querySelectorAll('.hero-card').forEach((card) => {
+      const button = card.querySelector('.play-button');
+      if (!button) return;
+      if (card.dataset.sound === 'true') {
+        button.addEventListener('click', () => playAudio(card));
+      }
+    });
+  </script>
+</body>
+</html>
